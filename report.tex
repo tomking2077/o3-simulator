@@ -25,6 +25,7 @@
 \item The simulator keeps running while a memory unit is still writing. A store can leave the reorder buffer when it enters memory, and the write happens later.
 \end{itemize}
 
+\clearpage
 \section{Code changes}
 
 The starter already ran a single-issue Tomasulo pipeline. The changes below keep that pipeline and widen the points that were limited to one instruction.
@@ -42,6 +43,7 @@ Each cycle the simulator issues, writes back, and commits up to the issue width,
 \item Stall comments carry the blocked cycles. Branches fall through instead of redirecting fetch.
 \end{itemize}
 
+\clearpage
 \section{How to run}
 
 From \texttt{code}:
@@ -517,9 +519,10 @@ Addresses   Values
 28          5.0
 32          4.0
 \end{Verbatim}
+\clearpage
 \section{Discrepancies with existing sample implementation/results}
 
-This section compares \texttt{sample\_report\_01} with Figures~1 and~4 of the sample report. The sample runs commit, writeback, memory, execute, then issue. This simulator runs issue, execute, memory, writeback, then commit. The other timing differences follow from that order. The comments mark the cycle where each one starts.
+Figures~1 and~4 are \texttt{sample\_report\_01} at issue widths 1 and 4. The sample runs commit, writeback, memory, execute, then issue. This simulator runs issue, execute, memory, writeback, then commit. The comments mark the cycle where each difference starts.
 
 \subsection*{Issue width 1}
 
@@ -535,6 +538,12 @@ Writeback runs after execute, so a result cannot be used in the cycle it is writ
 
 A station freed during execute is issued on the next cycle. That wait is \texttt{no reservation station [4-10]}, \texttt{[11-16]}, and \texttt{[17]}.
 
-Other discrepancies, beyond these two figures, are of the same kind. They come from architectural choices: which result is allowed to go first, and whether a reservation-station count or a functional-unit count is what stops an instruction.
+\subsection*{Other discrepancies}
+
+The other timing differences follow two choices. They show up on the other programs and the other issue widths in the same way.
+
+Who goes first is the stage order. Execute queues a finished result before memory does, so that result takes the bus and the other one is \texttt{bus busy}. A station or a unit freed during execute can be issued on the next cycle, so the instruction that wanted it carries \texttt{no reservation station} for the cycles it waited.
+
+A reservation-station count and a functional-unit count are separate stops. A full station blocks issue. A busy unit blocks an instruction that already has a station, which is \texttt{no integer adder}, \texttt{no fp adder}, \texttt{no fp multiplier}, or \texttt{no load/store unit}. The floating-point units are pipelined, so each one still accepts one new operation per cycle. The integer adder and the load/store units are not. Where the sample lets a different instruction go first, or applies only one of those caps, the cycles shift for that reason.
 
 \end{document}
