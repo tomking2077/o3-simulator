@@ -42,3 +42,6 @@ Thumbs.db
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+# Local reference copies, not part of the submission
+reference/
