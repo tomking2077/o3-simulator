@@ -56,7 +56,7 @@ The ordinary one-cycle result latch is not a stall. A full reorder buffer stops 
 
 ## How to run
 
-From `tomasulo-python/code`:
+From `code`:
 
 ```
 python main.py test_cases/test_case.txt
